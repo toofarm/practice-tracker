@@ -1,0 +1,20 @@
+{
+  // Disable default VSCode formatting for TypeScript and JS files
+  "[typescript]": {
+    "editor.formatOnSave": false
+  },
+  "[javascript]": {
+    "editor.formatOnSave": false
+  },
+  // Disable default VSCode formatting for TypeScript React files
+  "[typescriptreact]": {
+    "editor.formatOnSave": false
+  },
+  // Allow formatting for other languages
+  "editor.formatOnSave": true,
+  // Let ESLint (incorporating Prettier errors) format code on save
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.tabSize": 2
+}
