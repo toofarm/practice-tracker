@@ -10,11 +10,11 @@ enum EActions {
 
 type TAction = {
   type: EActions;
-  payload: User | null
+  payload: string | null
 }
 
 type TState = {
-  user: User | null
+  user: string | null
 }
 
 const initialState: TState = {
@@ -23,7 +23,7 @@ const initialState: TState = {
 
 // ACTIONS
 
-export const setAuthUser = (user: User) => ({
+export const setAuthUser = (user: string) => ({
   type: EActions.SET_AUTH,
   payload: user
 })
@@ -40,13 +40,13 @@ const authReducer: unknown = (state:TState = initialState, { type, payload }: TA
   case EActions.SET_AUTH:
     return {
       ...state,
-      auth: payload
+      user: payload
     }
     break
   case EActions.CLEAR_AUTH:
     return {
       ...state,
-      auth: null
+      user: null
     }
     break
   default:

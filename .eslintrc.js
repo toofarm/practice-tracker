@@ -39,6 +39,7 @@ module.exports = {
     'function-paren-newline': ['warn', 'multiline'],
     'function-call-argument-newline': ['error', 'consistent'],
     'key-spacing': ['warn', { afterColon: true, beforeColon: false }],
+    'react/no-unescaped-entities': 0
   },
   overrides: [
     // Tell ESLint we don't need prop checking on our .tsx components

@@ -3,109 +3,112 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
-import * as React from 'react';
-import { FontAwesome } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ColorSchemeName, Pressable } from 'react-native';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../firebase/config';
-import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
-import { setAuthUser, clearAuthUser } from '../store/modules/auth';
+import React, { useEffect } from 'react'
+import { FontAwesome } from '@expo/vector-icons'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { ColorSchemeName, Pressable } from 'react-native'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '../firebase/config'
+import { useAppDispatch, useAppSelector } from '../hooks/useRedux'
+import { setAuthUser, clearAuthUser } from '../store/modules/auth'
 import store from '../store'
-import { Provider } from 'react-redux';
+import { Provider } from 'react-redux'
 
-import Colors from '../constants/Colors';
-import useColorScheme from '../hooks/useColorScheme';
-import ModalScreen from '../scenes/ModalScreen';
-import NotFoundScreen from '../scenes/NotFoundScreen';
-import TabOneScreen from '../scenes/TabOneScreen';
-import TabTwoScreen from '../scenes/TabTwoScreen';
-import LoginScreen from '../scenes/Login';
-import SignUpScreen from '../scenes/SignUp';
-import ResetScreen from '../scenes/Reset';
-import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
-import LinkingConfiguration from './LinkingConfiguration';
-
-onAuthStateChanged(auth, (user) => {
-  const dispatch = useAppDispatch() 
-
-  if (user) {
-    dispatch(setAuthUser(user))
-  } else {
-    dispatch(clearAuthUser())
-  }
-})
+import Colors from '../constants/Colors'
+import useColorScheme from '../hooks/useColorScheme'
+import ModalScreen from '../scenes/ModalScreen'
+import NotFoundScreen from '../scenes/NotFoundScreen'
+import TabOneScreen from '../scenes/TabOneScreen'
+import TabTwoScreen from '../scenes/TabTwoScreen'
+import LoginScreen from '../scenes/Login'
+import SignUpScreen from '../scenes/SignUp'
+import ResetScreen from '../scenes/Reset'
+import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types'
+import LinkingConfiguration from './LinkingConfiguration'
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
     <Provider store={store}>
       <NavigationContainer
-      linking={LinkingConfiguration}
-      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        linking={LinkingConfiguration}
+        theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <RootNavigator />
       </NavigationContainer>
     </Provider>
-  );
+  )
 }
 
 /**
  * A root stack navigator is often used for displaying modals on top of all other content.
  * https://reactnavigation.org/docs/modal
  */
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>()
 
 function RootNavigator() {
+  const dispatch = useAppDispatch() 
   const user = useAppSelector(state => state.auth.user)
+
+  onAuthStateChanged(auth, (user) => {
+    if (user?.email) {
+      dispatch(setAuthUser(user.email))
+    } else {
+      dispatch(clearAuthUser())
+    }
+  })
+
+  useEffect(() => {
+    console.log(`Our user is ${user}`)
+  }, [user])
 
   return (
     <Stack.Navigator>
-      {user ? (
+      {(user !== null) ? ( 
         <Stack.Screen 
-          name="TabOne" 
+          name='TabOne' 
           component={TabOneScreen} />
-        ) :
+      ) :
         (
           <Stack.Group>
             <Stack.Screen
-              name="LoginScreen"
+              name='LoginScreen'
               component={LoginScreen}
             />
             <Stack.Screen
-              name="SignUpScreen"
+              name='SignUpScreen'
               component={SignUpScreen}
             />
             <Stack.Screen
-              name="ResetScreen"
+              name='ResetScreen'
               component={ResetScreen}
             />
           </Stack.Group>
-          )}
+        )}
       <Stack.Screen 
-        name="NotFound" 
+        name='NotFound' 
         component={NotFoundScreen} 
         options={{ title: 'Oops!' }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
+        <Stack.Screen name='Modal' component={ModalScreen} />
       </Stack.Group>
     </Stack.Navigator>
-  );
+  )
 }
 
 const NoAuthStack = () => {
   return (
     <>
       <Stack.Screen
-        name="LoginScreen"
+        name='LoginScreen'
         component={LoginScreen}
       />
       <Stack.Screen
-        name="SignUpScreen"
+        name='SignUpScreen'
         component={SignUpScreen}
       />
       <Stack.Screen
-        name="ResetScreen"
+        name='ResetScreen'
         component={ResetScreen}
       />
     </>
@@ -116,23 +119,23 @@ const NoAuthStack = () => {
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
  * https://reactnavigation.org/docs/bottom-tab-navigator
  */
-const BottomTab = createBottomTabNavigator<RootTabParamList>();
+const BottomTab = createBottomTabNavigator<RootTabParamList>()
 
 function BottomTabNavigator() {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme()
 
   return (
     <BottomTab.Navigator
-      initialRouteName="TabOne"
+      initialRouteName='TabOne'
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
       }}>
       <BottomTab.Screen
-        name="TabOne"
+        name='TabOne'
         component={TabOneScreen}
         options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
           title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name='code' color={color} />,
           headerRight: () => (
             <Pressable
               onPress={() => navigation.navigate('Modal')}
@@ -140,7 +143,7 @@ function BottomTabNavigator() {
                 opacity: pressed ? 0.5 : 1,
               })}>
               <FontAwesome
-                name="info-circle"
+                name='info-circle'
                 size={25}
                 color={Colors[colorScheme].text}
                 style={{ marginRight: 15 }}
@@ -150,23 +153,23 @@ function BottomTabNavigator() {
         })}
       />
       <BottomTab.Screen
-        name="TabTwo"
+        name='TabTwo'
         component={TabTwoScreen}
         options={{
           title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name='code' color={color} />,
         }}
       />
       <BottomTab.Screen
-        name="SignUpScreen"
+        name='SignUpScreen'
         component={SignUpScreen}
         options={{
           title: 'Sign Up',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name='code' color={color} />,
         }}
       />
     </BottomTab.Navigator>
-  );
+  )
 }
 
 /**
@@ -176,5 +179,5 @@ function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
 }) {
-  return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
+  return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />
 }

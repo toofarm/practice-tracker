@@ -1,5 +1,7 @@
 import React,{ useState } from 'react'
 import { StyleSheet, TextInput, SafeAreaView, TouchableOpacity } from 'react-native'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../firebase/config'
 
 import { Text } from '../components/Themed'
 import { RootTabScreenProps } from '../types'
@@ -8,8 +10,14 @@ export default function LoginScreen({ navigation }: RootTabScreenProps<'LoginScr
   const [un, setUn] = useState<string>('')
   const [pw, setPw] = useState<string>('')
 
-  const submitDetails = () => {
-    console.log('We are trying to submit our details')
+  const submitDetails = async () => {
+    try {
+      const user = signInWithEmailAndPassword(auth, un, pw)
+      console.log(user)
+    } catch (err) {
+      console.log(err)
+      new Error('Unable to sign you in')
+    }
   }
 
   return (
@@ -43,11 +51,19 @@ export default function LoginScreen({ navigation }: RootTabScreenProps<'LoginScr
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
       <TouchableOpacity
+        accessibilityLabel='Sign up'
+        onPress={() => navigation.navigate('SignUpScreen')}
+      >
+        <Text style={styles.inlineLink}>
+          Sign Up
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
         accessibilityLabel='Reset password'
         onPress={() => navigation.navigate('ResetScreen')}
       >
-        <Text>
-                    Reset password
+        <Text style={styles.inlineLink}>
+          Reset password
         </Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -97,5 +113,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'blue',
     textAlign: 'center'
+  },
+  inlineLink: {
+    margin: 12,
+    color: 'blue'
   }
 })
