@@ -13,6 +13,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase/config';
 import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 import { setAuthUser, clearAuthUser } from '../store/modules/auth';
+import store from '../store'
+import { Provider } from 'react-redux';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -22,6 +24,7 @@ import TabOneScreen from '../scenes/TabOneScreen';
 import TabTwoScreen from '../scenes/TabTwoScreen';
 import LoginScreen from '../scenes/Login';
 import SignUpScreen from '../scenes/SignUp';
+import ResetScreen from '../scenes/Reset';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -37,11 +40,13 @@ onAuthStateChanged(auth, (user) => {
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
-    <NavigationContainer
+    <Provider store={store}>
+      <NavigationContainer
       linking={LinkingConfiguration}
       theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <RootNavigator />
-    </NavigationContainer>
+        <RootNavigator />
+      </NavigationContainer>
+    </Provider>
   );
 }
 
@@ -52,13 +57,30 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
-  const auth = useAppSelector(state => state.auth)
+  const user = useAppSelector(state => state.auth.user)
 
   return (
     <Stack.Navigator>
-      {auth ? (<NoAuthStack />) :
+      {user ? (
+        <Stack.Screen 
+          name="TabOne" 
+          component={TabOneScreen} />
+        ) :
         (
-          <BottomTabNavigator />
+          <Stack.Group>
+            <Stack.Screen
+              name="LoginScreen"
+              component={LoginScreen}
+            />
+            <Stack.Screen
+              name="SignUpScreen"
+              component={SignUpScreen}
+            />
+            <Stack.Screen
+              name="ResetScreen"
+              component={ResetScreen}
+            />
+          </Stack.Group>
           )}
       <Stack.Screen 
         name="NotFound" 

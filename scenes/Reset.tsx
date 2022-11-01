@@ -1,21 +1,23 @@
 import { useState } from 'react';
 import { StyleSheet, TextInput, SafeAreaView, TouchableOpacity } from 'react-native';
 
-import { Text, View } from '../components/Themed';
+import { Text } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
 
-export default function LoginScreen({ navigation }: RootTabScreenProps<'LoginScreen'>) {
+export default function ResetScreen({ navigation }: RootTabScreenProps<'ResetScreen'>) {
     const [un, setUn] = useState<string>('')
-    const [pw, setPw] = useState<string>('')
 
     const submitDetails = () => {
-        console.log('We are trying to submit our details')
+        console.log('We are trying to submit your password reset request')
     }
 
     return (
         <SafeAreaView style={styles.container}>
+            <Text>
+              Enter your email and we'll send you a message that lets you reset your password
+            </Text>
             <Text style={styles.label}>
-                Email or Username
+                Email
             </Text>
             <TextInput
                 style={styles.input}
@@ -23,32 +25,14 @@ export default function LoginScreen({ navigation }: RootTabScreenProps<'LoginScr
                 value={un}
                 placeholder='Enter your email'
             />
-            <Text style={styles.label}>
-                Password
-            </Text>
-            <TextInput
-                style={styles.input}
-                onChangeText={setPw}
-                value={pw}
-                secureTextEntry={true}
-                placeholder='Enter your password'
-            />
             <TouchableOpacity
-                disabled={!un || !pw}
-                style={[styles.button, !un || !pw ?
+                disabled={!un}
+                style={[styles.button, !un ?
                     styles.buttonDisabled :
                     null]}
-                accessibilityLabel='Submit login credentials'
+                accessibilityLabel='Submit password reset request'
                 onPress={submitDetails}>
                 <Text style={styles.buttonText}>Submit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                accessibilityLabel='Reset password'
-                onPress={() => navigation.navigate('ResetScreen')}
-            >
-                <Text>
-                    Reset password
-                </Text>
             </TouchableOpacity>
         </SafeAreaView>
     );
