@@ -1,5 +1,5 @@
-import { RootState } from "..";
-import { User } from "firebase/auth";
+import { RootState } from '..'
+import { User } from 'firebase/auth'
 
 // TYPINGS
 
@@ -35,23 +35,23 @@ export const clearAuthUser = () => ({
 
 // REDUCER 
 
-const authReducer: any = (state:TState = initialState, { type, payload }: TAction ):RootState => {
+const authReducer: unknown = (state:TState = initialState, { type, payload }: TAction ):RootState => {
   switch (type) {
-    case EActions.SET_AUTH:
-      return {
-        ...state,
-        auth: payload
-      }
-      break
-    case EActions.CLEAR_AUTH:
-      return {
-        ...state,
-        auth: null
-      }
-      break
-    default:
-      return state
+  case EActions.SET_AUTH:
+    return {
+      ...state,
+      auth: payload
+    }
+    break
+  case EActions.CLEAR_AUTH:
+    return {
+      ...state,
+      auth: null
+    }
+    break
+  default:
+    return state
   }
-};
+}
 
-export default authReducer;
+export default authReducer
